@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인터랙티브 QR코드 생성기</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --background-color: #f8f9fa;
+            --panel-bg-color: #ffffff;
+            --text-color: #212529;
+            --border-color: #dee2e6;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+        
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 900px;
+            background-color: var(--panel-bg-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px var(--shadow-color);
+        }
+
+        .controls-panel {
+            flex: 1;
+        }
+        
+        .output-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            min-height: 300px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        textarea, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 20px;
+        }
+
+        .color-options .form-group {
+            flex: 1;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 40px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            background: none;
+        }
+
+        #qrcode-container {
+            width: 256px;
+            height: 256px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+        }
+        
+        #qrcode-container img {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 4px;
+        }
+
+        #download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            max-width: 256px;
+        }
+        
+        #download-btn:hover {
+            background-color: #0056b3;
+        }
+        
+        #download-btn:disabled {
+            background-color: #a0a0a0;
+            cursor: not-allowed;
+        }
+
+        .placeholder-text {
+            color: #888;
+            text-align: center;
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="controls-panel">
+            <h1>QR코드 생성기</h1>
+            
+            <div class="form-group">
+                <label for="text-input">텍스트 또는 URL</label>
+                <textarea id="text-input" placeholder="QR코드로 만들 내용을 입력하세요...">https://www.google.com</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="size-input">크기 (Pixels)</label>
+                <input type="number" id="size-input" value="256" min="50" max="1000">
+            </div>
+
+            <div class="color-options">
+                <div class="form-group">
+                    <label for="color-dark-input">QR 색상</label>
+                    <input type="color" id="color-dark-input" value="#000000">
+                </div>
+                <div class="form-group">
+                    <label for="color-light-input">배경 색상</label>
+                    <input type="color" id="color-light-input" value="#ffffff">
+                </div>
+            </div>
+        </div>
+
+        <div class="output-panel">
+            <div id="qrcode-container">
+                <p class="placeholder-text">이곳에 QR코드가<br>생성됩니다.</p>
+            </div>
+            <button id="download-btn" disabled>PNG로 다운로드</button>
+        </div>
+    </div>
+
+    <script>
+        // DOM 요소 가져오기
+        const textInput = document.getElementById('text-input');
+        const sizeInput = document.getElementById('size-input');
+        const colorDarkInput = document.getElementById('color-dark-input');
+        const colorLightInput = document.getElementById('color-light-input');
+        const qrcodeContainer = document.getElementById('qrcode-container');
+        const downloadBtn = document.getElementById('download-btn');
+
+        let qrcode = null; // QRCode 인스턴스를 저장할 변수
+
+        // QR코드 생성 및 업데이트 함수
+        function generateQRCode() {
+            const text = textInput.value.trim();
+            const size = parseInt(sizeInput.value);
+            const colorDark = colorDarkInput.value;
+            const colorLight = colorLightInput.value;
+            
+            // 입력 텍스트가 없으면 QR코드 지우고 함수 종료
+            if (!text) {
+                qrcodeContainer.innerHTML = '<p class="placeholder-text">내용을 입력해주세요.</p>';
+                downloadBtn.disabled = true;
+                return;
+            }
+
+            // 기존 QR코드가 있으면 지움
+            qrcodeContainer.innerHTML = '';
+
+            // 새 QR코드 생성
+            qrcode = new QRCode(qrcodeContainer, {
+                text: text,
+                width: size,
+                height: size,
+                colorDark: colorDark,
+                colorLight: colorLight,
+                correctLevel: QRCode.CorrectLevel.H // 에러 복원 레벨
+            });
+            
+            // 다운로드 버튼 활성화
+            downloadBtn.disabled = false;
+        }
+
+        // 다운로드 버튼 클릭 이벤트 처리
+        downloadBtn.addEventListener('click', () => {
+            // qrcode-container 안의 img 태그 찾기
+            const img = qrcodeContainer.querySelector('img');
+            if (img) {
+                const link = document.createElement('a');
+                link.href = img.src;
+                link.download = 'qrcode.png';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                alert("먼저 QR코드를 생성해주세요.");
+            }
+        });
+
+        // 각 입력 필드에 이벤트 리스너 추가 (실시간 업데이트)
+        textInput.addEventListener('input', generateQRCode);
+        sizeInput.addEventListener('change', generateQRCode);
+        colorDarkInput.addEventListener('input', generateQRCode);
+        colorLightInput.addEventListener('input', generateQRCode);
+
+        // 페이지 로드 시 초기 QR코드 생성
+        window.onload = generateQRCode;
+    </script>
+</body>
+</html>
