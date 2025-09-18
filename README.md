@@ -5,4 +5,5 @@
  - AI, ML, DL
   
 ## 라이브 데모
- - 포트폴리오 사이트 : laddergame.html
+ - 사다리 게임 : https://github.com/Snouball98/Portfolio/blob/main/laddergame.html
+ - QR 코드 생성기 : 
