@@ -1,9 +1,365 @@
-# AI Developer Portfolio
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[권순우] | AI와 HR을 융합하는 전문가</title>
+    <style>
+        /* 기본 스타일 및 폰트 설정 */
+        :root {
+            --main-color: #0d47a1; /* 전문적인 느낌의 딥 블루 */
+            --background-color: #f4f7f9;
+            --text-color: #333;
+            --light-gray: #e0e0e0;
+            --white: #ffffff;
+        }
 
-인공지능, 데이터 분석, 임베디드 개발 전문가
+        html {
+            scroll-behavior: smooth;
+        }
 
-## 기술 스택
- - AI, ML, DL
-  
-## 라이브 데모
- - 포트폴리오 사이트 : Link 게시 칸
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* 전체 레이아웃 */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 헤더 (네비게이션 바) */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        nav .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--main-color);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li a {
+            display: block;
+            padding: 20px 15px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--main-color);
+        }
+
+        /* 섹션 공통 스타일 */
+        section {
+            padding: 80px 20px;
+            border-bottom: 1px solid var(--light-gray);
+        }
+        
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        h1, h2, h3 {
+            color: var(--main-color);
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 40px;
+        }
+
+        /* Home 섹션 */
+        #home {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            margin-top: -60px; /* 헤더 높이만큼 올리기 */
+        }
+
+        #home h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+        }
+
+        #home p {
+            font-size: 1.2em;
+            max-width: 600px;
+        }
+        
+        /* 프로젝트 카드 스타일 */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .project-card {
+            background-color: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+        }
+
+        .project-card h3 {
+            margin-top: 0;
+        }
+        
+        .project-card .tags span {
+            display: inline-block;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            margin-right: 5px;
+            margin-top: 10px;
+        }
+        
+        .project-card a {
+            color: var(--main-color);
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        /* 스킬 섹션 */
+        .skill-category {
+            margin-bottom: 30px;
+        }
+        
+        .skill-category h3 {
+            border-left: 4px solid var(--main-color);
+            padding-left: 10px;
+        }
+
+        .skill-category ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .skill-category li {
+            background-color: var(--main-color);
+            color: var(--white);
+            padding: 8px 15px;
+            margin: 5px;
+            border-radius: 5px;
+            font-weight: 500;
+        }
+
+        /* 연락처 및 푸터 */
+        #contact p {
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        #contact .contact-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #contact .contact-links a {
+            margin: 0 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--main-color);
+            text-decoration: none;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: var(--text-color);
+            color: var(--white);
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none; /* 모바일에선 메뉴 숨김 (간단한 버전) */
+            }
+            #home h1 {
+                font-size: 2.5em;
+            }
+            h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav class="container">
+            <div class="logo">[권순우]</div>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home">
+            <h1>데이터로 사람과 조직의<br>더 나은 내일을 만듭니다.</h1>
+            <p>AI/임베디드 기술과 HR/ER 전문성을 융합하여<br>객관적인 데이터에 기반한 의사결정을 돕고, 조직의 성장을 가속화하는 전문가 [권순우]입니다.</p>
+        </section>
+
+        <section id="about" class="container">
+            <h2>소개 (About Me)</h2>
+            <p>
+                저는 효율적인 시스템을 만드는 임베디드 개발자로서, 가장 예측하기 어려운 변수는 '사람'이라는 것을 깨달았습니다. 기술이 조직에 성공적으로 적용되기 위해서는 사람과 문화에 대한 깊은 이해가 필수적이라는 결론을 내렸습니다. 저는 이 '사람'이라는 변수를 데이터 기반으로 이해하고 조직의 성장을 이끌기 위해 HR 분야에 뛰어들었고, 이제 두 분야의 전문성을 결합하여 기술과 사람이 함께 성장하는 솔루션을 만듭니다. 저의 목표는 모든 구성원이 공정하게 평가받고 성장에 집중할 수 있는 데이터 기반의 HR 시스템을 구축하는 것입니다.
+            </p>
+        </section>
+
+        <section id="projects" class="container">
+            <h2>주요 프로젝트 (Projects)</h2>
+            <div class="project-grid">
+                <div class="project-card">
+                    <h3>퇴사율 예측 AI 모델 개발</h3>
+                    <p>구성원의 근속연수, 직무, 성과 등급 데이터를 활용하여 퇴사 가능성이 높은 직원을 예측하는 머신러닝 모델을 개발하고, 선제적 케어 프로그램을 제안했습니다.</p>
+                    <div class="tags">
+                        <span>#People Analytics</span>
+                        <span>#Machine Learning</span>
+                    </div>
+                    <div class="tags">
+                        <span>Python</span>
+                        <span>Scikit-learn</span>
+                        <span>Pandas</span>
+                    </div>
+                    <a href="[프로젝트 Github 링크 또는 상세 설명 링크]" target="_blank">자세히 보기 &rarr;</a>
+                </div>
+
+                <div class="project-card">
+                    <h3>IoT 기반 자동 근태관리 시스템</h3>
+                    <p>라즈베리파이와 NFC 센서를 활용하여 출퇴근을 자동 기록하고, 사무실 환경 데이터를 수집하여 쾌적한 근무 환경을 조성하는 시스템을 구축했습니다.</p>
+                    <div class="tags">
+                        <span>#HR Automation</span>
+                        <span>#Embedded System</span>
+                    </div>
+                    <div class="tags">
+                        <span>C/C++</span>
+                        <span>Raspberry Pi</span>
+                        <span>Python</span>
+                    </div>
+                    <a href="[프로젝트 Github 링크 또는 상세 설명 링크]" target="_blank">자세히 보기 &rarr;</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>채용 서류 자동 분류 시스템</h3>
+                    <p>자연어 처리(NLP) 기술을 이용해 이력서에서 직무 관련 핵심 역량을 자동으로 추출하고, 직무 적합도를 점수화하여 서류 검토 시간을 80% 단축했습니다.</p>
+                    <div class="tags">
+                        <span>#HR Tech</span>
+                        <span>#Natural Language Processing</span>
+                    </div>
+                    <div class="tags">
+                        <span>Python</span>
+                        <span>KoNLPy</span>
+                    </div>
+                    <a href="[프로젝트 Github 링크 또는 상세 설명 링크]" target="_blank">자세히 보기 &rarr;</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="skills" class="container">
+            <h2>보유 기술 (Skills)</h2>
+            <div class="skill-category">
+                <h3>AI & Data Science</h3>
+                <ul>
+                    <li>Python</li>
+                    <li>Pandas</li>
+                    <li>Scikit-learn</li>
+                    <li>TensorFlow</li>
+                    <li>SQL</li>
+                </ul>
+            </div>
+            <div class="skill-category">
+                <h3>Embedded Systems</h3>
+                <ul>
+                    <li>C/C++</li>
+                    <li>Linux</li>
+                    <li>RTOS</li>
+                    <li>Raspberry Pi</li>
+                    <li>Arduino</li>
+                </ul>
+            </div>
+            <div class="skill-category">
+                <h3>HR & Labor Relations</h3>
+                <ul>
+                    <li>근로기준법</li>
+                    <li>채용/평가/보상</li>
+                    <li>조직문화 설계</li>
+                    <li>노사관계 관리</li>
+                </ul>
+            </div>
+             <div class="skill-category">
+                <h3>Tools & Collaboration</h3>
+                <ul>
+                    <li>Git</li>
+                    <li>GitHub</li>
+                    <li>Docker</li>
+                    <li>Jira</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="contact" class="container">
+            <h2>연락처 (Contact)</h2>
+            <p>새로운 기회와 협업에 대해 언제나 열려있습니다.<br>아래 연락처로 편하게 연락 주세요.</p>
+            <div class="contact-links">
+                <a href="mailto:[당신의 이메일 주소]">Email</a>
+                <a href="https://github.com/[당신의 Github ID]" target="_blank">GitHub</a>
+                <a href="https://linkedin.com/in/[당신의 LinkedIn ID]" target="_blank">LinkedIn</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 [권순우]. All Rights Reserved.</p>
+    </footer>
+
+</body>
+</html>
