@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인터랙티브 주사위 게임</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap');
+
+        :root {
+            --bg-color: #f7f7f7;
+            --player-bg: rgba(255, 255, 255, 0.7);
+            --active-player-bg: rgba(255, 255, 255, 1);
+            --main-color: #5b64c3;
+            --accent-color: #c7365f;
+            --shadow: rgba(0, 0, 0, 0.15);
+            --dice-dot-color: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-image: linear-gradient(to top right, var(--main-color), var(--accent-color));
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+        }
+
+        main {
+            display: flex;
+            width: 90%;
+            max-width: 900px;
+            height: 80vh;
+            max-height: 600px;
+            background: var(--player-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 10px 30px var(--shadow);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .player {
+            flex: 50%;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background-color 0.5s;
+        }
+
+        .player--active {
+            background-color: var(--active-player-bg);
+        }
+
+        .player--winner {
+            background-color: #2f2f2f;
+        }
+
+        .player--winner .name,
+        .player--winner .score {
+            color: var(--accent-color);
+        }
+
+        .name {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .score {
+            font-size: 5rem;
+            font-weight: 300;
+            color: var(--accent-color);
+            margin-bottom: auto;
+        }
+
+        .current {
+            background-color: var(--main-color);
+            color: #fff;
+            width: 60%;
+            padding: 1.5rem;
+            border-radius: 9px;
+            text-align: center;
+        }
+
+        .current-label {
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .current-score {
+            font-size: 2rem;
+        }
+
+        .controls {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            background: var(--player-bg);
+            backdrop-filter: blur(10px);
+            border: none;
+            color: #444;
+            font-size: 1.1rem;
+            font-family: inherit;
+            padding: 0.7rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 5px var(--shadow);
+        }
+
+        /* 주사위 스타일 */
+        .dice-container {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 2rem;
+            perspective: 300px;
+        }
+        .dice {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s;
+        }
+        .face {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+        }
+        .front  { transform:                translateZ(35px); }
+        .back   { transform: rotateX(180deg) translateZ(35px); }
+        .right  { transform: rotateY(90deg)  translateZ(35px); }
+        .left   { transform: rotateY(-90deg) translateZ(35px); }
+        .top    { transform: rotateX(90deg)  translateZ(35px); }
+        .bottom { transform: rotateX(-90deg) translateZ(35px); }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <main>
+        <section class="player player--0 player--active">
+            <h2 class="name">Player 1</h2>
+            <p class="score" id="score--0">0</p>
+            <div class="current">
+                <p class="current-label">Current</p>
+                <p class="current-score" id="current--0">0</p>
+            </div>
+        </section>
+        <section class="player player--1">
+            <h2 class="name">Player 2</h2>
+            <p class="score" id="score--1">0</p>
+            <div class="current">
+                <p class="current-label">Current</p>
+                <p class="current-score" id="current--1">0</p>
+            </div>
+        </section>
+
+        <div class="controls">
+            <button class="btn btn--new">🔄 New Game</button>
+            <div class="dice-container hidden">
+                <div class="dice">
+                    <div class="face front">1</div>
+                    <div class="face back">6</div>
+                    <div class="face right">4</div>
+                    <div class="face left">3</div>
+                    <div class="face top">5</div>
+                    <div class="face bottom">2</div>
+                </div>
+            </div>
+            <button class="btn btn--roll">🎲 Roll Dice</button>
+            <button class="btn btn--hold">📥 Hold</button>
+        </div>
+    </main>
+
+    <script>
+        'use strict';
+
+        // 요소 선택
+        const player0El = document.querySelector('.player--0');
+        const player1El = document.querySelector('.player--1');
+        const score0El = document.getElementById('score--0');
+        const score1El = document.getElementById('score--1');
+        const current0El = document.getElementById('current--0');
+        const current1El = document.getElementById('current--1');
+
+        const diceContainer = document.querySelector('.dice-container');
+        const diceEl = document.querySelector('.dice');
+        const btnNew = document.querySelector('.btn--new');
+        const btnRoll = document.querySelector('.btn--roll');
+        const btnHold = document.querySelector('.btn--hold');
+
+        let scores, currentScore, activePlayer, playing;
+
+        // 게임 초기화 함수
+        const init = function () {
+            scores = [0, 0];
+            currentScore = 0;
+            activePlayer = 0;
+            playing = true;
+
+            score0El.textContent = 0;
+            score1El.textContent = 0;
+            current0El.textContent = 0;
+            current1El.textContent = 0;
+
+            diceContainer.classList.add('hidden');
+            player0El.classList.remove('player--winner');
+            player1El.classList.remove('player--winner');
+            player0El.classList.add('player--active');
+            player1El.classList.remove('player--active');
+        };
+        init();
+
+        const switchPlayer = function () {
+            document.getElementById(`current--${activePlayer}`).textContent = 0;
+            currentScore = 0;
+            activePlayer = activePlayer === 0 ? 1 : 0;
+            player0El.classList.toggle('player--active');
+            player1El.classList.toggle('player--active');
+        };
+
+        // 주사위 굴리기
+        btnRoll.addEventListener('click', function () {
+            if (playing) {
+                // 1. 랜덤 주사위 숫자 생성
+                const dice = Math.trunc(Math.random() * 6) + 1;
+
+                // 2. 주사위 보여주기 및 회전
+                diceContainer.classList.remove('hidden');
+                switch(dice) {
+                    case 1: diceEl.style.transform = 'rotateY(0deg)'; break;
+                    case 2: diceEl.style.transform = 'rotateX(90deg) rotateZ(180deg)'; break;
+                    case 3: diceEl.style.transform = 'rotateY(90deg) rotateZ(90deg)'; break;
+                    case 4: diceEl.style.transform = 'rotateY(-90deg) rotateZ(-90deg)'; break;
+                    case 5: diceEl.style.transform = 'rotateX(-90deg)'; break;
+                    case 6: diceEl.style.transform = 'rotateX(180deg)'; break;
+                }
+
+                // 3. 1이 나왔는지 확인
+                if (dice !== 1) {
+                    // 현재 점수에 주사위 숫자 더하기
+                    currentScore += dice;
+                    document.getElementById(`current--${activePlayer}`).textContent = currentScore;
+                } else {
+                    // 다음 플레이어로 전환
+                    switchPlayer();
+                }
+            }
+        });
+
+        btnHold.addEventListener('click', function () {
+            if (playing) {
+                // 1. 현재 점수를 총점에 추가
+                scores[activePlayer] += currentScore;
+                document.getElementById(`score--${activePlayer}`).textContent = scores[activePlayer];
+
+                // 2. 100점 이상인지 확인
+                if (scores[activePlayer] >= 100) {
+                    // 게임 종료
+                    playing = false;
+                    diceContainer.classList.add('hidden');
+                    document.querySelector(`.player--${activePlayer}`).classList.add('player--winner');
+                    document.querySelector(`.player--${activePlayer}`).classList.remove('player--active');
+                } else {
+                    // 다음 플레이어로 전환
+                    switchPlayer();
+                }
+            }
+        });
+
+        btnNew.addEventListener('click', init);
+    </script>
+</body>
+</html>
